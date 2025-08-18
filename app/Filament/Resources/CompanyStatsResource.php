@@ -19,6 +19,8 @@ class CompanyStatsResource extends Resource
     protected static ?string $model = CompanyStats::class;
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
 
+    protected static ?string $navigationGroup = 'Landing Page';
+
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form

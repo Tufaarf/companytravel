@@ -18,6 +18,8 @@ class HeroSectionResource extends Resource
 {
     protected static ?string $model = HeroSection::class;
 
+    protected static ?string $navigationGroup = 'Landing Page';
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function form(Forms\Form $form): Forms\Form
