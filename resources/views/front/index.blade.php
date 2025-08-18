@@ -1,6 +1,106 @@
 
 @extends('front.master')
 @section('content')
+<style>
+    header.header{
+  background: rgba(14, 66, 178, 0.65) !important; /* biru transparan */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 24px rgba(0, 49, 132, 0.12);
+  transition: background .25s ease, box-shadow .25s ease;
+}
+
+/* Saat halaman discroll / sticky */
+header.header.scrolled,
+.scrolled header.header,
+header.header.sticked{
+  background: rgba(14, 66, 178, 0.9) !important;
+  box-shadow: 0 10px 28px rgba(0, 49, 132, 0.18);
+}
+
+/* Warna menu (opsional, tetap putih) */
+header.header .navmenu a{ color:#fff; }
+header.header .navmenu a:hover,
+header.header .navmenu a.active{ color:#e6f2ff; }
+
+/* Mobile nav aktif (burger dibuka) */
+.mobile-nav-active header.header,
+.mobile-nav-active .navmenu{
+  background: rgba(14, 66, 178, 0.95) !important;
+}
+ /* ===== RESET aturan template yang memaksa deskripsi di bawah ===== */
+.glightbox-container .gslide-description,
+.glightbox-container .gdesc {
+  position: static !important;     /* jangan absolute/bottom lagi */
+  width: auto !important;
+}
+
+/* ===== Ukuran kontainer utama ===== */
+.glightbox-container .ginner-container{
+  width: min(96vw, 1440px) !important;
+  height: 90vh !important;
+}
+
+/* ===== Dua kolom: kiri media, kanan card detail ===== */
+.glightbox-container .gslide{
+  display: flex !important;
+  align-items: stretch;
+  gap: 0;
+}
+
+/* Kiri: foto 4:3, setinggi viewport */
+.glightbox-container .gslide-media{
+  flex: 1 1 auto;                /* isi ruang sisa */
+  height: 90vh;                  /* tinggi tetap */
+  aspect-ratio: 4 / 3;           /* rasio 4:3 */
+  max-width: calc(96vw - 420px); /* sisakan ruang card kanan */
+}
+.glightbox-container .gslide-media img,
+.glightbox-container .gslide-media video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;             /* penuh & rapi */
+  display: block;
+}
+
+/* Kanan: card detail scrollable */
+.glightbox-container .gslide-description{
+  flex: 0 0 420px;               /* lebar card kanan */
+  max-width: 420px;
+  background: #fff;
+  border-left: 1px solid rgba(0,0,0,.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;              /* shell */
+}
+.glightbox-container .gdesc-inner{
+  height: 100%;
+  overflow-y: auto;              /* konten yg scroll */
+  padding: 18px 20px;
+}
+
+/* Rapikan tipografi */
+.glightbox-container .gdesc-inner h1,
+.glightbox-container .gdesc-inner h2,
+.glightbox-container .gdesc-inner h3{ margin: 0 0 .5rem; }
+.glightbox-container .gdesc-inner ul,
+.glightbox-container .gdesc-inner ol{ padding-left: 1.25rem; margin: .25rem 0 .75rem; }
+
+/* Responsif (mobile): stack vertikal */
+@media (max-width: 992px){
+  .glightbox-container .gslide{ display: block !important; }
+  .glightbox-container .gslide-media{
+    height: 50vh; aspect-ratio: auto; max-width: 100%;
+  }
+  .glightbox-container .gslide-description{
+    max-width: 100%; flex-basis: auto;
+  }
+  .glightbox-container .gdesc-inner{ height: calc(40vh - 0px); }
+}
+
+
+
+</style>
 <body class="index-page">
 
   <header id="header" class="header d-flex align-items-center fixed-top">
@@ -19,29 +119,11 @@
           <li><a href="#services">Services</a></li>
           <li><a href="#portfolio">Portfolio</a></li>
           <li><a href="#team">Team</a></li>
-          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li>
           <li><a href="#contact">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="cta-btn" href="index.html#about">Get Started</a>
 
     </div>
   </header>
@@ -110,7 +192,7 @@
                     </div>
                 </div>
         @empty
-                <p>Data Kosomg</p>
+                <p>Data Kosong</p>
         @endforelse
           <!-- End Stats Item -->
 
@@ -132,8 +214,8 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
         <div class="row gy-5">
-
-          <div class="col-xl-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+        @forelse ($services->take(3) as $service)
+            <div class="col-xl-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
             <div class="service-item">
               <div class="img">
                 <img src="{{asset('assets/img/services-1.jpg')}}" class="img-fluid" alt="">
@@ -143,46 +225,16 @@
                   <i class="bi bi-activity"></i>
                 </div>
                 <a href="service-details.html" class="stretched-link">
-                  <h3>Nesciunt Mete</h3>
+                  <h3>{{$service->title}}</h3>
                 </a>
-                <p>Provident nihil minus qui consequatur non omnis maiores. Eos accusantium minus dolores iure perferendis.</p>
+                <p>{!!$service->description!!}</p>
               </div>
             </div>
           </div><!-- End Service Item -->
+        @empty
+          <p>Tidak ada Data</p>
+        @endforelse
 
-          <div class="col-xl-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
-            <div class="service-item">
-              <div class="img">
-                <img src="{{asset('assets/img/services-2.jpg')}}" class="img-fluid" alt="">
-              </div>
-              <div class="details position-relative">
-                <div class="icon">
-                  <i class="bi bi-broadcast"></i>
-                </div>
-                <a href="service-details.html" class="stretched-link">
-                  <h3>Eosle Commodi</h3>
-                </a>
-                <p>Ut autem aut autem non a. Sint sint sit facilis nam iusto sint. Libero corrupti neque eum hic non ut nesciunt dolorem.</p>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-xl-4 col-md-6" data-aos="zoom-in" data-aos-delay="400">
-            <div class="service-item">
-              <div class="img">
-                <img src="{{asset('assets/img/services-3.jpg')}}" class="img-fluid" alt="">
-              </div>
-              <div class="details position-relative">
-                <div class="icon">
-                  <i class="bi bi-easel"></i>
-                </div>
-                <a href="service-details.html" class="stretched-link">
-                  <h3>Ledo Markt</h3>
-                </a>
-                <p>Ut excepturi voluptatem nisi sed. Quidem fuga consequatur. Minus ea aut. Vel qui id voluptas adipisci eos earum corrupti.</p>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
 
         </div>
 
@@ -229,146 +281,76 @@
 
     <!-- Features Section -->
     <section id="features" class="features section">
+  <div class="container">
 
-      <div class="container">
+    {{-- TAB NAV --}}
+    <ul class="nav nav-tabs row d-flex" data-aos="fade-up" data-aos-delay="100">
+      @forelse ($detailedServices as $service)
+        <li class="nav-item col-3">
+          <a
+            class="nav-link {{ $loop->first ? 'active show' : '' }}"
+            data-bs-toggle="tab"
+            data-bs-target="#features-tab-{{ $service->id }}"
+            role="tab"
+            aria-controls="features-tab-{{ $service->id }}"
+            aria-selected="{{ $loop->first ? 'true' : 'false' }}"
+          >
+            <i class="bi bi-binoculars"></i>
+            <h4 class="d-none d-lg-block">{{ $service->name }}</h4>
+          </a>
+        </li>
+      @empty
+        <li class="nav-item col-12">
+          <span class="nav-link disabled">Belum ada layanan</span>
+        </li>
+      @endforelse
+    </ul>
+    <!-- End Tab Nav -->
 
-        <ul class="nav nav-tabs row  d-flex" data-aos="fade-up" data-aos-delay="100">
-          <li class="nav-item col-3">
-            <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#features-tab-1">
-              <i class="bi bi-binoculars"></i>
-              <h4 class="d-none d-lg-block">Modi sit est dela pireda nest</h4>
-            </a>
-          </li>
-          <li class="nav-item col-3">
-            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-2">
-              <i class="bi bi-box-seam"></i>
-              <h4 class="d-none d-lg-block">Unde praesenti mara setra le</h4>
-            </a>
-          </li>
-          <li class="nav-item col-3">
-            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-3">
-              <i class="bi bi-brightness-high"></i>
-              <h4 class="d-none d-lg-block">Pariatur explica nitro dela</h4>
-            </a>
-          </li>
-          <li class="nav-item col-3">
-            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-4">
-              <i class="bi bi-command"></i>
-              <h4 class="d-none d-lg-block">Nostrum qui dile node</h4>
-            </a>
-          </li>
-        </ul><!-- End Tab Nav -->
+    {{-- TAB PANES --}}
+    <div class="tab-content" data-aos="fade-up" data-aos-delay="200">
+      @forelse ($detailedServices as $service)
+        <div
+          class="tab-pane fade {{ $loop->first ? 'active show' : '' }}"
+          id="features-tab-{{ $service->id }}"
+          role="tabpanel"
+        >
+          <div class="row">
+            <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
+              <h3>{{ $service->name }}</h3>
 
-        <div class="tab-content" data-aos="fade-up" data-aos-delay="200">
-
-          <div class="tab-pane fade active show" id="features-tab-1">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.</h3>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i>
-                    <spab>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</spab>
-                  </li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit</span>.</li>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
-                </ul>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="{{asset('assets/img/working-1.jpg')}}" alt="" class="img-fluid">
+              {{-- Detail dari RichEditor (boleh mengandung bullet & numbering) --}}
+              <div class="fst-italic mb-3">
+                {!! $service->detail !!}
               </div>
             </div>
-          </div><!-- End Tab Content Item -->
 
-          <div class="tab-pane fade" id="features-tab-2">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Neque exercitationem debitis soluta quos debitis quo mollitia officia est</h3>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
-                </ul>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="{{asset('assets/img/working-2.jpg')}}" alt="" class="img-fluid">
-              </div>
+            <div class="col-lg-6 order-1 order-lg-2 text-center">
+              <img
+                class="img-fluid"
+                alt="{{ $service->name }}"
+                src="{{
+                  $service->image
+                    ? ( \Illuminate\Support\Str::startsWith($service->image, ['http://','https://'])
+                        ? $service->image
+                        : \Illuminate\Support\Facades\Storage::url($service->image)
+                      )
+                    : asset('assets/img/placeholder-service.jpg')
+                }}"
+              >
             </div>
-          </div><!-- End Tab Content Item -->
-
-          <div class="tab-pane fade" id="features-tab-3">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Voluptatibus commodi ut accusamus ea repudiandae ut autem dolor ut assumenda</h3>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</span></li>
-                </ul>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="{{asset('assets/img/working-3.jpg')}}" alt="" class="img-fluid">
-              </div>
-            </div>
-          </div><!-- End Tab Content Item -->
-
-          <div class="tab-pane fade" id="features-tab-4">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Omnis fugiat ea explicabo sunt dolorum asperiores sequi inventore rerum</h3>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
-                </ul>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="{{asset('assets/img/working-4.jpg')}}" alt="" class="img-fluid">
-              </div>
-            </div>
-          </div><!-- End Tab Content Item -->
-
+          </div>
         </div>
+      @empty
+        <div class="tab-pane fade active show">
+          <p>Belum ada data layanan yang ditampilkan.</p>
+        </div>
+      @endforelse
+    </div>
 
-      </div>
-
-    </section><!-- /Features Section -->
+  </div>
+</section>
+<!-- /Features Section -->
 
     <!-- Services 2 Section -->
     <section id="services-2" class="services-2 section light-background">
@@ -382,67 +364,19 @@
       <div class="container">
 
         <div class="row gy-4">
-
+            @forelse ($services as $service)
           <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
             <div class="service-item d-flex position-relative h-100">
-              <i class="bi bi-briefcase icon flex-shrink-0"></i>
+              <i class="bi bi-{{$service->icon_class}} icon flex-shrink-0"></i>
               <div>
-                <h4 class="title"><a href="#" class="stretched-link">Lorem Ipsum</a></h4>
-                <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                <h4 class="title"><a href="#" class="stretched-link">{{$service->title}}</a></h4>
+                <p class="description">{!!$service->description!!}</p>
               </div>
             </div>
           </div><!-- End Service Item -->
-
-          <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="service-item d-flex position-relative h-100">
-              <i class="bi bi-card-checklist icon flex-shrink-0"></i>
-              <div>
-                <h4 class="title"><a href="#" class="stretched-link">Dolor Sitema</a></h4>
-                <p class="description">Minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat tarad limino ata</p>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <div class="service-item d-flex position-relative h-100">
-              <i class="bi bi-bar-chart icon flex-shrink-0"></i>
-              <div>
-                <h4 class="title"><a href="#" class="stretched-link">Sed ut perspiciatis</a></h4>
-                <p class="description">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
-            <div class="service-item d-flex position-relative h-100">
-              <i class="bi bi-binoculars icon flex-shrink-0"></i>
-              <div>
-                <h4 class="title"><a href="#" class="stretched-link">Magni Dolores</a></h4>
-                <p class="description">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-md-6" data-aos="fade-up" data-aos-delay="500">
-            <div class="service-item d-flex position-relative h-100">
-              <i class="bi bi-brightness-high icon flex-shrink-0"></i>
-              <div>
-                <h4 class="title"><a href="#" class="stretched-link">Nemo Enim</a></h4>
-                <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
-          <div class="col-md-6" data-aos="fade-up" data-aos-delay="600">
-            <div class="service-item d-flex position-relative h-100">
-              <i class="bi bi-calendar4-week icon flex-shrink-0"></i>
-              <div>
-                <h4 class="title"><a href="#" class="stretched-link">Eiusmod Tempor</a></h4>
-                <p class="description">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi</p>
-              </div>
-            </div>
-          </div><!-- End Service Item -->
-
+            @empty
+            <p>Tidak ada data</p>
+            @endforelse
         </div>
 
       </div>
@@ -575,159 +509,62 @@
 
         <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
 
-          <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
-            <li data-filter="*" class="filter-active">All</li>
-            <li data-filter=".filter-app">App</li>
-            <li data-filter=".filter-product">Product</li>
-            <li data-filter=".filter-branding">Branding</li>
-            <li data-filter=".filter-books">Books</li>
-          </ul><!-- End Portfolio Filters -->
-
           <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
 
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/app-1.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>App 1</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/app-1.jpg')}}" title="App 1" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
+            <div class="row gy-4 isotope-container">
+  @forelse ($products as $product)
+    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
+      <div class="portfolio-content h-100">
+        {{-- Gambar produk --}}
+        <img
+          class="img-fluid"
+          alt="{{ $product->name }}"
+          src="{{
+            $product->image
+              ? ( \Illuminate\Support\Str::startsWith($product->image, ['http://','https://'])
+                    ? $product->image
+                    : \Illuminate\Support\Facades\Storage::url($product->image) )
+              : asset('assets/img/portfolio/placeholder.jpg')
+          }}"
+        >
 
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/product-1.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Product 1</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/product-1.jpg')}}" title="Product 1" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
+        <div class="portfolio-info">
+          {{-- <h4>{{ $product->name }}</h4> --}}
+          <p>{{$product->name }}</p>
 
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/branding-1.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Branding 1</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/branding-1.jpg')}}" title="Branding 1" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
+          {{-- Tombol popup (GLightbox) --}}
+          <a
+            href="{{
+              $product->image
+                ? ( \Illuminate\Support\Str::startsWith($product->image, ['http://','https://'])
+                      ? $product->image
+                      : \Illuminate\Support\Facades\Storage::url($product->image) )
+                : asset('assets/img/portfolio/placeholder.jpg')
+            }}"
+            class="glightbox preview-link"
+            data-gallery="portfolio-gallery-products"
+            data-glightbox="title: {{ e($product->name) }}; description: .desc-{{ $product->id }}"
+            title="{{ $product->name }}"
+          >
+            <i class="bi bi-zoom-in"></i>
+          </a>
+        </div>
+      </div>
 
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-books">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/books-1.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Books 1</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/books-1.jpg')}}" title="Branding 1" data-gallery="portfolio-gallery-book" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/app-2.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>App 2</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/app-2.jpg')}}" title="App 2" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/product-2.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Product 2</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/product-2.jpg')}}" title="Product 2" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/branding-2.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Branding 2</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/branding-2.jpg')}}" title="Branding 2" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-books">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/books-2.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Books 2</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/books-2.jpg')}}" title="Branding 2" data-gallery="portfolio-gallery-book" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/app-3.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>App 3</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/app-3.jpg')}}" title="App 3" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/product-3.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Product 3</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/product-3.jpg')}}" title="Product 3" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/branding-3.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Branding 3</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/branding-3.jpg')}}" title="Branding 2" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-books">
-              <div class="portfolio-content h-100">
-                <img src="{{asset('assets/img/portfolio/books-3.jpg')}}" class="img-fluid" alt="">
-                <div class="portfolio-info">
-                  <h4>Books 3</h4>
-                  <p>Lorem ipsum, dolor sit amet consectetur</p>
-                  <a href="{{asset('assets/img/portfolio/books-3.jpg')}}" title="Branding 3" data-gallery="portfolio-gallery-book" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                  <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
-                </div>
-              </div>
-            </div><!-- End Portfolio Item -->
+      {{-- Deskripsi untuk lightbox (tersembunyi) --}}
+      <div class="d-none">
+        <div class="glightbox-desc desc-{{ $product->id }}">
+          {!! $product->detail !!}
+          <hr class="my-3">
+          <p><strong>Harga:</strong> Rp {{ number_format((int) $product->price, 0, ',', '.') }}</p>
+        </div>
+      </div>
+    </div>
+  @empty
+    <p class="text-muted">Belum ada produk.</p>
+  @endforelse
+</div>
+<!-- End Portfolio Item -->
 
           </div><!-- End Portfolio Container -->
 
@@ -749,57 +586,27 @@
       <div class="container">
 
         <div class="row gy-5">
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="member">
-              <div class="pic"><img src="{{asset('assets/img/team/team-1.jpg')}}" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Walter White</h4>
-                <span>Chief Executive Officer</span>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
+            @forelse ($teams as $team)
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="member">
+                    <div class="pic" style="width:100%; height:480px; overflow:hidden; border-radius:12px;">
+                    <img src="{{ Storage::url($team->image_url) }}"
+                        alt="{{ $team->name }}"
+                        class="w-100 h-100"
+                        style="object-fit:cover; object-position:center;">
+                    </div>
+                    <div class="member-info">
+                    <h4>{{ $team->name }}</h4>
+                    <span>{{ $team->position }}</span>
+                    <div class="social">
+                        <a href="{{ $team->instagram }}"><i class="bi bi-instagram"></i></a>
+                    </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <div class="pic"><img src="{{asset('assets/img/team/team-2.jpg')}}" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Sarah Jhonson</h4>
-                <span>Product Manager</span>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
                 </div>
-              </div>
+            @empty
+            @endforelse
             </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <div class="member">
-              <div class="pic"><img src="{{asset('assets/img/team/team-3.jpg')}}" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>William Anderson</h4>
-                <span>CTO</span>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-        </div>
-
       </div>
 
     </section><!-- /Team Section -->
@@ -816,14 +623,14 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
         <div class="row gy-4">
-          <div class="col-lg-6 ">
+          <div class="col-lg-24 ">
             <div class="row gy-4">
 
               <div class="col-lg-12">
                 <div class="info-item d-flex flex-column justify-content-center align-items-center" data-aos="fade-up" data-aos-delay="200">
                   <i class="bi bi-geo-alt"></i>
                   <h3>Address</h3>
-                  <p>A108 Adam Street, New York, NY 535022</p>
+                  <p>Jl. Raya Panglima Sudirman, Wiroborang, Kec. Mayangan, Kota Probolinggo, Jawa Timur 67213</p>
                 </div>
               </div><!-- End Info Item -->
 
@@ -831,7 +638,7 @@
                 <div class="info-item d-flex flex-column justify-content-center align-items-center" data-aos="fade-up" data-aos-delay="300">
                   <i class="bi bi-telephone"></i>
                   <h3>Call Us</h3>
-                  <p>+1 5589 55488 55</p>
+                  <p>+62 822-2931-6108</p>
                 </div>
               </div><!-- End Info Item -->
 
@@ -839,45 +646,12 @@
                 <div class="info-item d-flex flex-column justify-content-center align-items-center" data-aos="fade-up" data-aos-delay="400">
                   <i class="bi bi-envelope"></i>
                   <h3>Email Us</h3>
-                  <p>info@example.com</p>
+                  <p>raihanstourtravel@gmail.com</p>
                 </div>
               </div><!-- End Info Item -->
 
             </div>
           </div>
-
-          <div class="col-lg-6">
-            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="500">
-              <div class="row gy-4">
-
-                <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                </div>
-
-                <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                </div>
-
-                <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                </div>
-
-                <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="4" placeholder="Message" required=""></textarea>
-                </div>
-
-                <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                  <button type="submit">Send Message</button>
-                </div>
-
-              </div>
-            </form>
-          </div><!-- End Contact Form -->
-
         </div>
 
       </div>
@@ -975,6 +749,22 @@
 
   <!-- Main JS File -->
   <script src="{{asset('js/main.js')}}"></script>
+
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    GLightbox({
+      selector: '.portfolio .glightbox',
+      descPosition: 'right',   // card detail di kanan
+      width: '96vw',
+      height: '90vh',
+      loop: true,
+    });
+  });
+</script>
+
+
+
+
 
 </body>
 @endsection

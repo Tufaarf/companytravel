@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
@@ -79,8 +80,14 @@ class CompanyStatsResource extends Resource
                             ->numeric()
                             ->minValue(0),
                     ])
+
                     ->mutateFormDataUsing(fn (array $data) => $data)
                     ->action(fn (CompanyStats $record, array $data) => $record->update($data)),
+                      DeleteAction::make() // ✅ Delete button
+                        ->modalHeading('Hapus Statistik')
+                        ->modalButton('Hapus')
+                        ->requiresConfirmation()
+                        ->action(fn (CompanyStats $record) => $record->delete()),
             ])
             ->bulkActions([]);
     }

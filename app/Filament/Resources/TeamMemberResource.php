@@ -35,10 +35,7 @@ class TeamMemberResource extends Resource
                     ->label('Position')
                     ->maxLength(100),
 
-                TextInput::make('twitter')->nullable()->label('Twitter'),
-                TextInput::make('facebook')->nullable()->label('Facebook'),
                 TextInput::make('instagram')->nullable()->label('Instagram'),
-                TextInput::make('linkedin')->nullable()->label('LinkedIn'),
 
                 FileUpload::make('image_url')
                     ->required()

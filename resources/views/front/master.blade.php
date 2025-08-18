@@ -35,8 +35,10 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 </head>
-@yield('content')
+  <main class="main">
 
+@yield('content')
+  </main>
 @stack('before-scripts')
 
 @stack('after-scripts')

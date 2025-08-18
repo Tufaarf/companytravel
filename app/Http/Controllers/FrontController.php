@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\About;
 use App\Models\CompanyStats;
+use App\Models\DetailedService;
 use App\Models\HeroSection;
+use App\Models\Product;
+use App\Models\Service;
+use App\Models\TeamMember;
 use Illuminate\Http\Request;
 
 class FrontController extends Controller
@@ -16,6 +20,20 @@ class FrontController extends Controller
         $herosections = HeroSection::all();
         $abouts = About::all();
         $companyStats = CompanyStats::all();
-        return view('front.index', compact('herosections', 'abouts', 'companyStats'));
+        $services = Service::all();
+        $detailedServices = DetailedService::all();
+        $products = Product::all();
+        $teams = TeamMember::all(); // Fetching detailed services if needed
+        return view('front.index', compact('herosections', 'abouts', 'companyStats', 'services', 'detailedServices', 'products', 'teams'));
     }
+
+    public function services()
+    {
+        // Logic for the services page can be added here
+        $herosections = HeroSection::all();
+        $services = Service::all();
+        return view('front.services.index', compact('services', 'herosections'));
+    }
+
+
 }
