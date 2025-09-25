@@ -6,6 +6,7 @@ use App\Models\About;
 use App\Models\CompanyStats;
 use App\Models\DetailedService;
 use App\Models\HeroSection;
+use App\Models\legalitas;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\TeamMember;
@@ -24,7 +25,8 @@ class FrontController extends Controller
         $detailedServices = DetailedService::all();
         $products = Product::all();
         $teams = TeamMember::all(); // Fetching detailed services if needed
-        return view('front.index', compact('herosections', 'abouts', 'companyStats', 'services', 'detailedServices', 'products', 'teams'));
+        $legalities = legalitas::all();
+        return view('front.index', compact('herosections', 'abouts', 'companyStats', 'services', 'detailedServices', 'products', 'teams', 'legalities'));
     }
 
     public function services()
